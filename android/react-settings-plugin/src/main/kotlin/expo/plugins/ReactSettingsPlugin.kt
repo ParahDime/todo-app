@@ -1,4 +1,4 @@
-package expo.plugins
+npm install expo-module-scripts --save-devpackage expo.plugins
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings

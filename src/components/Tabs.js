@@ -24,6 +24,7 @@ export default function Tabs() {
                 component={Exercise}
                 color={"green"}
                 options={{
+                    headerShown: false,
                     tabBarLabel: "Exercise list",
                     tabBarIcon: ({ focused }) => (
                       <Feather
@@ -41,6 +42,7 @@ export default function Tabs() {
                 component={Food}
                 color={"green"}
                 options={{
+                    headerShown: false,
                     tabBarLabel: "Meal Planning",
                     tabBarIcon: ({ focused }) => (
                       <Feather

@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 0,
         marginTop: '10%',
         borderWidth: 2, // Border width
         borderColor: '#000', // Border color (black)

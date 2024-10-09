@@ -1,17 +1,24 @@
+//react imports
 import { StatusBar } from 'expo-status-bar';
 import React, {useState, useEffect, useContext} from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-
 import { FlatList, Text, View, StyleSheet, TextInput, Button, TouchableOpacity, Modal, Pressable } from 'react-native';
+import RNFS from 'react-native-fs';
+
+//files imported
 import Header from '../components/Header'
 import { Feather } from '@expo/vector-icons'
 import { GlobalContext } from '../components/globalState';
 
+//functions outside of file
 const Stack = createStackNavigator();
 
+const jsonFilePath = `${RNFS.DocumentDirectoryPath}/screens/items.json`;
+
+const items = require('./items.json');
 export default function Exercise() {
   
-  //const variable to store items on different screens
+  //const variable to store items on different screens (move to global)
   const [items, setItems] = useState({
     activities: [],
     blank: [],
@@ -20,36 +27,41 @@ export default function Exercise() {
   
   //const { items, setItems } = useContext(GlobalContext);
 
+  //move to an array (?)
   const [selectedItem, setSelectedItem] = useState(null);  // Track selected item
-  const [modalVisible, setModalVisible] = useState(false); // Control modal visibility
-  const [persistentDescription, setPersistentDescription] = useState(''); // Store description
+  const [modalVisible, setModalVisible] = useState(false); // Control if popup modal is visible
+  const [persistentDescription, setPersistentDescription] = useState(''); // Store item description
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const [editableName, setEditableName] = useState('');  //editing name in modal
+  const [editableName, setEditableName] = useState('');  //store name as editable in modal
 
-  const [itemNo1Value, setItemNo1Value] = useState(''); // State for item 1 editable number
+  const [itemNo1Value, setItemNo1Value] = useState(''); // Values for numbers
   const [itemNo2Value, setItemNo2Value] = useState('');
   
+  //lambda function in order to count completed items
   const completedCount = items.activities.filter(item => item.completed).length;
   const totalCount = items.activities.length;
 
-  //counters that are used to keep track of completed items
+  //Counters that are used to keep track of completed items
   const [totalItemsCount, setTotalItemsCount] = useState(0);
   const [completedItemsCount, setCompletedItemsCount] = useState(0);
    
-  // Helper function to handle reordering
+  //Function to handle item reordering
    const reorderItems = (updatedItems) => {
-    // Move completed items to the bottom while keeping their original order.
+    
     return updatedItems
+    // Move completed items to the bottom while keeping their original order
       .sort((a, b) => (a.completed === b.completed ? 0 : a.completed ? 1 : -1));
   };
 
-  //helper function to add items to the list
+  //Function to add items to the list
   const handleAddItem = (screen, itemName) => {
-    if (itemName) {
+    if (itemName) { //if has characters in the string
       setItems((prevItems) => {
-        const updatedItems = {
+        const updatedItems = { //update the items
           ...prevItems,
+          //take the item name, ID is date, autoset to false completion
           [screen]: [...prevItems[screen], { name: itemName, id: Date.now(), completed: false }],
+          
         };
         return {
           ...updatedItems,
@@ -59,14 +71,22 @@ export default function Exercise() {
     }
   };
 
+  //Function to remove items from the list
   const handleRemoveItem = (itemId) => {
     setItems((prevItems) => ({
       ...prevItems,
       activities: prevItems.activities.filter(item => item.id !== itemId)  // Remove item by id
     }));
-    setModalVisible(false);  // Close the modal after removing
+
+    setItemNo1('');  //reset itemNo to empty or 0
+    setItemNo2('');
+
+    //REMOVE ITEMS
+
+    setModalVisible(false);  //close the modal after removing
   };
 
+  //Function to toggle completion
   const handleToggleCompletion = (itemId) => {
     setItems((prevItems) => {
       const updatedActivities = prevItems.activities.map((item) =>
@@ -75,33 +95,37 @@ export default function Exercise() {
 
       return {
         ...prevItems,
-        activities: reorderItems(updatedActivities),  // Reorder list after update
+        activities: reorderItems(updatedActivities),  //reorder list after update
       };
     });
   };
 
+  //Function for longPress on an item (opens modal)
   const handleLongPress = (item, index) => {
   setSelectedItem(item);  // Set the selected item details
-  setSelectedIndex(index + 1);  // Set the index as the displayed number (+1 to start from 1)
-  setPersistentDescription(item.description);  // Set persistent description
-  setItemNo1Value(itemNo1Value.toString()); // Set the value for itemNo1
+  setSelectedIndex(index + 1);  // Get the item number
+  setPersistentDescription(item.description);  // Set Item description
+  setItemNo1Value(itemNo1Value.toString()); // Set the value for numbers
   setItemNo2Value(itemNo2Value.toString());
-  setEditableName(item.name);
-  setModalVisible(true);  // Show the modal
+  setEditableName(item.name); //Set the name (editable)
+  setModalVisible(true);  // Show the modal popup
 };
 
+  //Function to close nodal
   const handleCloseModal = () => {
     if (selectedItem) {
 
+      //convert number (so is not displayed as NaN)
       const validItemNo1 = itemNo1Value.trim() === '' ? 0 : parseInt(itemNo1Value);
       const validItemNo2 = itemNo2Value.trim() === '' ? 0 : parseInt(itemNo2Value);
 
-      // Assuming you have a function to update the item in your list
+      //Update the details of the item
       updateItemDetails(selectedItem.id, persistentDescription, editableName, validItemNo1, validItemNo2);
     }
-    setModalVisible(false);  // Close the modal
+    setModalVisible(false);  //close the modal
   };
 
+  //Update the item details
   const updateItemDetails = (id, desc, name, number1, number2) => {
     // Find the item in your state and update it
     setItems((prevItems) => {
@@ -114,6 +138,7 @@ export default function Exercise() {
     });
   };
 
+  //calculates the amount of items completed
   useEffect(() => {
     const totalCount = items.activities.length; // Total number of items
     const completedCount = items.activities.filter(item => item.completed).length; // Completed items
@@ -121,6 +146,7 @@ export default function Exercise() {
     setCompletedItemsCount(completedCount);
   }, [items]);
 
+  //Page layout
   return (
     <View style={styles.container}>     
       <Header onAddItem={handleAddItem} />

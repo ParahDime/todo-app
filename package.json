@@ -1,5 +1,5 @@
 {
-  "name": "fuckreact",
+  "name": "todo-app",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,10 @@
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
     "react-native": "0.74.5",
-    "react-native-picker": "^4.3.7"
+    "react-native-fs": "^2.20.0",
+    "react-native-picker": "^4.3.7",
+    "react-native-sound": "^0.11.2",
+    "react-sound": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

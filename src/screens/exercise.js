@@ -9,7 +9,7 @@ import { FlatList, Text, View, StyleSheet, TextInput, Button, TouchableOpacity, 
 //files imported
 import Header from '../components/Header'
 import { Feather } from '@expo/vector-icons'
-import { GlobalContext } from '../components/globalState';
+//import { GlobalContext } from '../components/globalState';
 
 //functions outside of file
 const Stack = createStackNavigator();

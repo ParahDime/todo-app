@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "199503204117",
+    "project_id": "todo-app-36cbe",
+    "storage_bucket": "todo-app-36cbe.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:199503204117:android:840c0b3e3698916b59631c",
+        "android_client_info": {
+          "package_name": "com.fuckreact"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB40q6EaRKQ5lZyOeC2U2dIqa1vv9wEsHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

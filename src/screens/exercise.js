@@ -11,6 +11,10 @@ import Header from '../components/Header'
 import { Feather } from '@expo/vector-icons'
 //import { GlobalContext } from '../components/globalState';
 
+//import functions
+//export { items, setItems } from '../components/functions'
+
+
 //functions outside of file
 const Stack = createStackNavigator();
 
@@ -21,7 +25,7 @@ export default function Exercise() {
     activities: [],
     blank: [],
     food: [],
-  });
+  }); 
   
   //const { items, setItems } = useContext(GlobalContext);
 
@@ -277,8 +281,8 @@ emptyList: {
 flatListContainer: {
   flex: 1,
   width: '99%',
-  //borderWidth: 2,
-  //borderColor: 'black',
+  borderWidth: 2,
+  borderColor: 'black',
 },
 counterText: {
   fontSize: 18,

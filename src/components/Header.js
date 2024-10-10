@@ -6,6 +6,7 @@ const Header = ({ onAddItem }) => {
     const [itemName, setItemName] = useState('');
     const [selectedScreen, setSelectedScreen] = useState('activities');
 
+    //converts into to readable
     const handleAddItem = () => {
         if (itemName) {
             onAddItem(selectedScreen, itemName);
@@ -27,8 +28,8 @@ const Header = ({ onAddItem }) => {
                 onValueChange={(itemValue) => setSelectedScreen(itemValue)}
             >
                 <Picker.Item label="Activities" value="activities" />
-                <Picker.Item label="Blank" value="blank" />
-                <Picker.Item label="Food Items" value="food" />
+                <Picker.Item label="Planner" value="planner" />
+                <Picker.Item label="Food Items" value="foods" />
             </Picker>
             <Button title="Add" onPress={handleAddItem} />
         </View>

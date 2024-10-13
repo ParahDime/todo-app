@@ -11,8 +11,8 @@ import Header from '../components/Header'
 import { Feather } from '@expo/vector-icons'
 
 //import functions
-import { handleAddItem, setItems } from '../components/functions'
-
+import { handleAddItem, handleRemoveItem, useItems, handleToggleCompletion, LongPressActivity, closeActivityModal } from '../components/functions'
+//
 
 //functions outside of file
 const Stack = createStackNavigator();
@@ -20,23 +20,20 @@ const Stack = createStackNavigator();
 export default function Exercise() {
   
   //const variable to store items on different screens (move to global)
-  const [items, setItems] = useState({
-    activities: [],
-    blank: [],
-    food: [],
-  }); 
-  
+  const [items, setItems] = useItems();
+  const [screen, setScreen] = useState('activities');
+
   //const { items, setItems } = useContext(GlobalContext);
 
   //move to an array (?)
   const [selectedItem, setSelectedItem] = useState(null);  // Track selected item
   const [modalVisible, setModalVisible] = useState(false); // Control if popup modal is visible
-  const [persistentDescription, setPersistentDescription] = useState(''); // Store item description
+  const [description, setDescription] = useState(''); // Store item description
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [editableName, setEditableName] = useState('');  //store name as editable in modal
 
-  const [itemNo1Value, setItemNo1Value] = useState(''); // Values for numbers
-  const [itemNo2Value, setItemNo2Value] = useState('');
+  const [itemNo1Value, setItemNo1Value] = useState(' '); // Values for numbers
+  const [itemNo2Value, setItemNo2Value] = useState(' ');
   
   //lambda function in order to count completed items
   const completedCount = items.activities.filter(item => item.completed).length;
@@ -45,77 +42,29 @@ export default function Exercise() {
   //Counters that are used to keep track of completed items
   const [totalItemsCount, setTotalItemsCount] = useState(0);
   const [completedItemsCount, setCompletedItemsCount] = useState(0);
-   
-  //Function to handle item reordering
-   const reorderItems = (updatedItems) => {
-    
-    return updatedItems
-    // Move completed items to the bottom while keeping their original order
-      .sort((a, b) => (a.completed === b.completed ? 0 : a.completed ? 1 : -1));
-  };
 
   //Function to add items to the list
-  /*const handleAddItem = (screen, itemName) => {
-    if (itemName) { //if has characters in the string
-      setItems((prevItems) => {
-        const updatedItems = { //update the items
-          ...prevItems,
-          //take the item name, ID is date, autoset to false completion
-          [screen]: [...prevItems[screen], { name: itemName, id: Date.now(), completed: false }],
-          
-        };
-        return {
-          ...updatedItems,
-          [screen]: reorderItems(updatedItems[screen]),
-        };
-      });
-    }
-  };*/
-
   const addItem = (screen, itemName) => {
     handleAddItem(screen, itemName, setItems);
   }
 
   //Function to remove items from the list
-  const handleRemoveItem = (itemId) => {
-    setItems((prevItems) => ({
-      ...prevItems,
-      activities: prevItems.activities.filter(item => item.id !== itemId)  // Remove item by id
-    }));
+  const removeItem = (itemID) => {
+    handleRemoveItem(screen, itemID, setItems, setModalVisible);
+  }
 
-    setItemNo1('');  //reset itemNo to empty or 0
-    setItemNo2('');
+  const toggleCompletion = (ItemID) => {
+    handleToggleCompletion(ItemID, screen, setItems);
+  }
 
-    //REMOVE ITEMS
+const longPress = (item, index) => {
+  LongPressActivity(item, index, setSelectedItem, setSelectedIndex, setDescription, setItemNo1Value, setItemNo2Value, setEditableName, setModalVisible);
+}
 
-    setModalVisible(false);  //close the modal after removing
-  };
-
-  //Function to toggle completion
-  const handleToggleCompletion = (itemId) => {
-    setItems((prevItems) => {
-      const updatedActivities = prevItems.activities.map((item) =>
-        item.id === itemId ? { ...item, completed: !item.completed } : item
-      );
-
-      return {
-        ...prevItems,
-        activities: reorderItems(updatedActivities),  //reorder list after update
-      };
-    });
-  };
-
-  //Function for longPress on an item (opens modal)
-  const handleLongPress = (item, index) => {
-  setSelectedItem(item);  // Set the selected item details
-  setSelectedIndex(index + 1);  // Get the item number
-  setPersistentDescription(item.description);  // Set Item description
-  setItemNo1Value(itemNo1Value.toString()); // Set the value for numbers
-  setItemNo2Value(itemNo2Value.toString());
-  setEditableName(item.name); //Set the name (editable)
-  setModalVisible(true);  // Show the modal popup
-};
-
+const closeModal = () => {
+  closeActivityModal(selectedItem, setModalVisible, description, editableName, setItems, screen, itemNo1Value, itemNo2Value);
+  //console.log(selectedItem.value1);
+}
   //Function to close nodal
   const handleCloseModal = () => {
     if (selectedItem) {
@@ -126,7 +75,7 @@ export default function Exercise() {
 
       //Update the details of the item
       console.log("confirm");///
-      updateItemDetails(selectedItem.id, persistentDescription, editableName, validItemNo1, validItemNo2);
+      updateItemDetails(selectedItem.id, description, editableName, validItemNo1, validItemNo2);
     }
     setModalVisible(false);  //close the modal
   };
@@ -173,8 +122,8 @@ export default function Exercise() {
             >
               <TouchableOpacity
               style={[styles.itemContainer, item.completed ? styles.completedItem : null]}
-              onPress={() => handleToggleCompletion(item.id)}
-              onLongPress={() => handleLongPress(item, index)}  // Handle long press
+              onPress={() => toggleCompletion(item.id)}
+              onLongPress={() => longPress(item, index)}  // Handle long press
             >
 
             
@@ -182,7 +131,7 @@ export default function Exercise() {
               <Text style={styles.itemName}>{item.name}</Text>
               <Button
                 title={item.completed ? '✔️' : '❌'}
-                onPress={() => handleToggleCompletion(item.id)}
+                onPress={() => toggleCompletion(item.id)}
               />
               </TouchableOpacity>
         </View>
@@ -201,7 +150,7 @@ export default function Exercise() {
         animationType="slide"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={handleCloseModal}
+        onRequestClose={closeModal}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalView}>
@@ -209,7 +158,7 @@ export default function Exercise() {
             <View style={styles.headerModalContainer}>
             <Text style={styles.modalNumber}>#{selectedIndex}</Text>
             <TouchableOpacity 
-              onPress={() => handleRemoveItem(selectedItem.id)}  // Call remove function
+              onPress={() => removeItem(selectedItem.id)}  // Call remove function
               style={styles.removeButtonContainer}
               >
               <Feather name="trash-2" size={24} color="red" />
@@ -231,8 +180,8 @@ export default function Exercise() {
                 placeholder="Description of exercise"
                 multiline={true}
                 numberOfLines={4}
-                onChangeText={setPersistentDescription}
-                value={persistentDescription}
+                onChangeText={setDescription}
+                value={description}
               />
             </View>
 
@@ -258,7 +207,7 @@ export default function Exercise() {
               </View>
             </View>
 
-            <Pressable style={styles.closeButton} onPress={handleCloseModal}>
+            <Pressable style={styles.closeButton} onPress={closeModal}>
               <Text style={styles.closeButtonText}>Save & Close</Text>
             </Pressable>
           </View>

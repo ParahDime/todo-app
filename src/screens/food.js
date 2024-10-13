@@ -10,7 +10,7 @@ import { Feather } from '@expo/vector-icons'
 import database from '@react-native-firebase/database';
 import firebase from '@react-native-firebase/app';
 
-import { useItems, handleAddItem, handleRemoveItem, handleToggleCompletion, handleCloseModal, longPressFood } from '../components/functions';
+import { useItems, handleAddItem, handleRemoveItem, handleToggleCompletion, closeFoodModal, longPressFood } from '../components/functions';
 
 const Stack = createStackNavigator();
 
@@ -42,7 +42,7 @@ export default function Food (){
     }
 
     const toggleCompletion = (ItemID) => {
-        handleToggleCompletion(screen, ItemID, setItems)
+        handleToggleCompletion(ItemID, screen, setItems)
     }
 
     const longPressed = (item, index) => {
@@ -50,7 +50,7 @@ export default function Food (){
     }
 
     const closeModal = () => {
-        handleCloseModal(selectedItem, setModalVisible, sdescription, editableName, setItems);
+        closeFoodModal(selectedItem, setModalVisible, sdescription, editableName, setItems, screen);
     }
 
     return (

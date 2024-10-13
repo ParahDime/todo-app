@@ -21,7 +21,7 @@ export function handleAddItem(screen, itemName, setItems) {
           
           if (screen === 'foods') {
             // Add the new item to the food array
-            updatedArray = [...prevItems[screen], { name: itemName, id: Date.now(), description: "lol cowboy", ingredients: ' ' ,completed: false }]; //add items to the array
+            updatedArray = [...prevItems[screen], { name: itemName, id: Date.now(), description: " ", ingredients: ' ' ,completed: false }]; //add items to the array
             return {
               ...prevItems,
               foods: updatedArray, // Update the food array
@@ -30,14 +30,14 @@ export function handleAddItem(screen, itemName, setItems) {
 
           } else if (screen === 'activities') {
             // Add the new item to the activities array
-            updatedArray = [...prevItems[screen], { name: itemName, id: Date.now(), completed: false }];
+            updatedArray = [...prevItems[screen], { name: itemName, id: Date.now(), description: " ", value1: 0, value2: 0, completed: false }];
             return {
               ...prevItems,
               activities: updatedArray, // Update the activities array
             };
           } else if (screen === 'planner') {
             // Add the new item to the blank array (if you need this)
-            updatedArray = [...prevItems[screen], { name: itemName }];
+            updatedArray[screen] = [...prevItems[screen], { name: itemName }];
             return {
               ...prevItems,
               planner: updatedArray, // Update the blank array
@@ -60,13 +60,13 @@ export function handleRemoveItem (screen, ItemID, setItems, setModalVisible) {
     }));
 
     setModalVisible(false);  //close the modal after removing
-    return;
+    return; 
 };
 
 
 //helper function to toggle item as completed
 export function handleToggleCompletion (itemId, screen, setItems)  {
-    setItems((prevItems) => {
+    setItems((prevItems) => {    
       const updatedItems = prevItems[screen].map((item) =>
         item.id === itemId ? { ...item, completed: !item.completed } : item
       );
@@ -85,14 +85,15 @@ export function handleToggleCompletion (itemId, screen, setItems)  {
       .sort((a, b) => (a.completed === b.completed ? 0 : a.completed ? 1 : -1));
   }
 
-export function LongPressActivity (item, index, modalVisible) {
+export function LongPressActivity (item, index, setSelectedItem, setSelectedIndex, setDescription, setItemNo1Value, setItemNo2Value, setEditableName, setModalVisible) {
     setSelectedItem(item);  // Set the selected item details
     setSelectedIndex(index + 1);  // Get the item number
-    setPersistentDescription(item.description);  // Set Item description
-    setItemNo1Value(itemNo1Value.toString()); // Set the value for numbers
-    setItemNo2Value(itemNo2Value.toString());
+    setDescription(item.description);  // Set Item description
+    setItemNo1Value(item.value1.toString()); // Set the value for numbers
+    setItemNo2Value(item.value2.toString());
     setEditableName(item.name); //Set the name (editable)
     setModalVisible(true);  // Show the modal popup
+    return;
 }
 
 //handle items being called by the modal (Foods screen)
@@ -107,30 +108,47 @@ export function longPressFood (item, index, setSelectedItem, setSelectedIndex, s
 }
 
 //edit function, check compatability (and item calls)
-export function updateItemDetails(id, newDescription, newName, setItems) {
+export function closeActivityModal(selectedItem, setModalVisible, sdescription, editableName, setItems, screen, newNum1, newNum2) {
 // Find the item in your state and update it
+if (selectedItem) {
+  const validItemNo1 = newNum1.trim() === '' ? 0 : parseInt(newNum1);
+  const validItemNo2 = newNum1.trim() === '' ? 0 : parseInt(newNum2);
+  
+  console.log(validItemNo1);
+
+  //Update the details of the item
+  setModalVisible(false); //close the modal
   setItems((prevItems) => {
-    
+  
     return {
       ...prevItems,
-      foods: prevItems.foods.map((item) =>
-        item.id === id 
-      ? { ...item, description: newDescription, name: newName } 
+      activities: prevItems.activities.map((item) =>
+        item.id === selectedItem.id 
+      ? { ...item, description: sdescription, name: editableName, number1: parseInt(validItemNo1), number2: parseInt(validItemNo2) } 
       : item   
       ),
     };
   });
+}  
 }
   
 //edit function, check compatability (and item calls)
-export function handleCloseModal (selectedItem, setModalVisible, sdescription, editableName, setItems ) {
+export function closeFoodModal (selectedItem, setModalVisible, sdescription, editableName, setItems, screen ) {
   //console.log(selectedItem);
   if (selectedItem) {
     //Update the details of the item
+    setModalVisible(false); //close the modal
+    setItems((prevItems) => {
     
-    updateItemDetails(selectedItem.id, sdescription, editableName, setItems);
-  }
-  console.log(selectedItem.description);
-  setModalVisible(false);  //close the modal
+      return {
+        ...prevItems,
+        foods: prevItems.foods.map((item) =>
+          item.id === selectedItem.id 
+        ? { ...item, description: sdescription, name: editableName } 
+        : item   
+        ),
+      };
+    });
+  }  
 }
 

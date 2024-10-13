@@ -65,33 +65,6 @@ const closeModal = () => {
   closeActivityModal(selectedItem, setModalVisible, description, editableName, setItems, screen, itemNo1Value, itemNo2Value);
   //console.log(selectedItem.value1);
 }
-  //Function to close nodal
-  const handleCloseModal = () => {
-    if (selectedItem) {
-
-      //convert number (so is not displayed as NaN)
-      const validItemNo1 = itemNo1Value.trim() === '' ? 0 : parseInt(itemNo1Value);
-      const validItemNo2 = itemNo2Value.trim() === '' ? 0 : parseInt(itemNo2Value);
-
-      //Update the details of the item
-      console.log("confirm");///
-      updateItemDetails(selectedItem.id, description, editableName, validItemNo1, validItemNo2);
-    }
-    setModalVisible(false);  //close the modal
-  };
-
-  //Update the item details
-  const updateItemDetails = (id, desc, name, number1, number2) => {
-    // Find the item in your state and update it
-    setItems((prevItems) => {
-      return {
-        ...prevItems,
-        activities: prevItems.activities.map((item) =>
-          item.id === id ? { ...item, description: desc, name, number1: parseInt(number1), number2: parseInt(number2) } : item
-        ),
-      };
-    });
-  };
 
   //calculates the amount of items completed
   useEffect(() => {

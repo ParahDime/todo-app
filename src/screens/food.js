@@ -10,7 +10,7 @@ import { Feather } from '@expo/vector-icons'
 import database from '@react-native-firebase/database';
 import firebase from '@react-native-firebase/app';
 
-import { useItems, handleAddItem, handleRemoveItem, handleToggleCompletion, handleLongPress, handleCloseModal, longPressFood } from '../components/functions';
+import { useItems, handleAddItem, handleRemoveItem, handleToggleCompletion, handleCloseModal, longPressFood } from '../components/functions';
 
 const Stack = createStackNavigator();
 
@@ -38,17 +38,15 @@ export default function Food (){
     };
 
     const removeItem = (itemID) => {
-        handleRemoveItem(screen, itemID, setItems);
+        handleRemoveItem(screen, itemID, setItems, setModalVisible);
     }
 
     const toggleCompletion = (ItemID) => {
-        handleToggleCompletion(ItemID, screen, setItems)
+        handleToggleCompletion(screen, ItemID, setItems)
     }
 
     const longPressed = (item, index) => {
         longPressFood(item, index, setSelectedItem, setSelectedIndex, setEditableName, setDescription, setModalVisible, setIngredients);
-
-        console.log("Modal Visible: " + modalVisible);
     }
 
     const closeModal = () => {
@@ -125,6 +123,18 @@ export default function Food (){
                         onChangeText={setEditableName}
                     />
                     </View>
+
+                    {/* Ingredients Box */}
+                    <View style={styles.ingredientsBox}>
+                    <TextInput
+                        //style={styles.descriptionText}
+                        placeholder="List of ingredients"
+                        multiline={true}
+                        numberOfLines={3}
+                        onChangeText={setIngredients}
+                        value={ingredients}
+                    />
+                    </View> 
 
                     {/* Description Box */}
                     <View style={styles.descriptionBox}>
@@ -237,6 +247,30 @@ const styles = StyleSheet.create({
         top: 20,
         left: 10,
         textAlign: 'center',
+      },
+      ingredientsBox: {
+        width: '95%',
+        height: '20%',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        marginTop: 30,
+        textAlign: 'center'
+      },  
+      descriptionBox: {
+        width: '95%',
+        height: '40%',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        marginTop: 30,
+        textAlign: 'center'
+      },
+      descriptionText: {
+        fontSize: 16,
+        textAlignVertical: 'top',
       },
       closeButton: {
         marginTop: 20,

@@ -21,7 +21,7 @@ export function handleAddItem(screen, itemName, setItems) {
           
           if (screen === 'foods') {
             // Add the new item to the food array
-            updatedArray = [...prevItems[screen], { name: itemName, id: Date.now(), completed: false }]; //add items to the array
+            updatedArray = [...prevItems[screen], { name: itemName, id: Date.now(), description: "lol cowboy", ingredients: ' ' ,completed: false }]; //add items to the array
             return {
               ...prevItems,
               foods: updatedArray, // Update the food array
@@ -30,7 +30,7 @@ export function handleAddItem(screen, itemName, setItems) {
 
           } else if (screen === 'activities') {
             // Add the new item to the activities array
-            updatedArray = [...prevItems[screen], { name: itemName }];
+            updatedArray = [...prevItems[screen], { name: itemName, id: Date.now(), completed: false }];
             return {
               ...prevItems,
               activities: updatedArray, // Update the activities array
@@ -53,14 +53,15 @@ export function handleAddItem(screen, itemName, setItems) {
       }
 }
 
-handleRemoveItem = (screen, ItemID, setItems) => {
+export function handleRemoveItem (screen, ItemID, setItems, setModalVisible) {
     setItems((prevItems) => ({
       ...prevItems,
-      [screen]: prevItems[screen].filter(item => item.id !== itemId)  // Remove item by id
+      [screen]: prevItems[screen].filter(item => item.id !== ItemID)  // Remove item by id
     }));
 
     setModalVisible(false);  //close the modal after removing
-  };
+    return;
+};
 
 
 //helper function to toggle item as completed
@@ -87,10 +88,10 @@ export function handleToggleCompletion (itemId, screen, setItems)  {
 export function LongPressActivity (item, index, modalVisible) {
     setSelectedItem(item);  // Set the selected item details
     setSelectedIndex(index + 1);  // Get the item number
-    //setPersistentDescription(item.description);  // Set Item description
-    //setItemNo1Value(itemNo1Value.toString()); // Set the value for numbers
-    //setItemNo2Value(itemNo2Value.toString());
-    //setEditableName(item.name); //Set the name (editable)
+    setPersistentDescription(item.description);  // Set Item description
+    setItemNo1Value(itemNo1Value.toString()); // Set the value for numbers
+    setItemNo2Value(itemNo2Value.toString());
+    setEditableName(item.name); //Set the name (editable)
     setModalVisible(true);  // Show the modal popup
 }
 
@@ -106,13 +107,16 @@ export function longPressFood (item, index, setSelectedItem, setSelectedIndex, s
 }
 
 //edit function, check compatability (and item calls)
-export function updateItemDetails(id, sdescription, name, setItems) {
+export function updateItemDetails(id, newDescription, newName, setItems) {
 // Find the item in your state and update it
   setItems((prevItems) => {
+    
     return {
       ...prevItems,
-      activities: prevItems.foods.map((item) =>
-        item.id === id ? { ...item, description: sdescription, name } : item
+      foods: prevItems.foods.map((item) =>
+        item.id === id 
+      ? { ...item, description: newDescription, name: newName } 
+      : item   
       ),
     };
   });
@@ -120,10 +124,13 @@ export function updateItemDetails(id, sdescription, name, setItems) {
   
 //edit function, check compatability (and item calls)
 export function handleCloseModal (selectedItem, setModalVisible, sdescription, editableName, setItems ) {
+  //console.log(selectedItem);
   if (selectedItem) {
     //Update the details of the item
+    
     updateItemDetails(selectedItem.id, sdescription, editableName, setItems);
   }
+  console.log(selectedItem.description);
   setModalVisible(false);  //close the modal
 }
 

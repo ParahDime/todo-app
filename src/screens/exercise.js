@@ -9,10 +9,9 @@ import { FlatList, Text, View, StyleSheet, TextInput, Button, TouchableOpacity, 
 //files imported
 import Header from '../components/Header'
 import { Feather } from '@expo/vector-icons'
-//import { GlobalContext } from '../components/globalState';
 
 //import functions
-//export { items, setItems } from '../components/functions'
+import { handleAddItem, setItems } from '../components/functions'
 
 
 //functions outside of file
@@ -56,7 +55,7 @@ export default function Exercise() {
   };
 
   //Function to add items to the list
-  const handleAddItem = (screen, itemName) => {
+  /*const handleAddItem = (screen, itemName) => {
     if (itemName) { //if has characters in the string
       setItems((prevItems) => {
         const updatedItems = { //update the items
@@ -71,7 +70,11 @@ export default function Exercise() {
         };
       });
     }
-  };
+  };*/
+
+  const addItem = (screen, itemName) => {
+    handleAddItem(screen, itemName, setItems);
+  }
 
   //Function to remove items from the list
   const handleRemoveItem = (itemId) => {
@@ -122,6 +125,7 @@ export default function Exercise() {
       const validItemNo2 = itemNo2Value.trim() === '' ? 0 : parseInt(itemNo2Value);
 
       //Update the details of the item
+      console.log("confirm");///
       updateItemDetails(selectedItem.id, persistentDescription, editableName, validItemNo1, validItemNo2);
     }
     setModalVisible(false);  //close the modal
@@ -151,7 +155,7 @@ export default function Exercise() {
   //Page layout
   return (
     <View style={styles.container}>     
-      <Header onAddItem={handleAddItem} />
+      <Header onAddItem={addItem} />
       <View style={styles.counterContainer}>
       <Text style={completedCount === totalCount ? styles.completedCounterText : styles.counterText}>
         Items completed: {completedCount}/{totalCount}
